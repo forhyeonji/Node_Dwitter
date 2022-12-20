@@ -41,7 +41,7 @@ export async function create (text, name, username){
 }
 
 export async function update (id, text){
-    const tweet = tweets.find(f => f.id === id);
+    const tweet = tweets.find((f) => f.id === id);
     if(tweet){
         tweet.text = text;
     }
