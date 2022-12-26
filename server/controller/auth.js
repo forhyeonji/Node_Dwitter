@@ -52,4 +52,13 @@ export async function login(req, res){
 
 function createJwtToken(id){
     return jwt.sign({ id }, jwtSecretKey, { expiresIn: jwtExpiresInDays });
-}
+};
+
+export async function me(req, res, next){
+    const user = await userRepository.findById(req.userId);
+    if (!user){
+        return res.status(404).json({ message : 'User not found' });
+    }
+    console.log('요청에 토큰이 있을까?',req.token);
+    res.status(200).json({ token : req.token, username: user.username, userId: req.userId });
+};

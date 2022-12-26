@@ -1,43 +1,53 @@
+import * as userRepository from '../data/auth.js';
+
 let tweets = [
     {
         id: '1',
         text: '너무춥다 너무너무 추워 ㅠ',
-        createdAt: Date.now().toString(),
-        name: 'Bob',
-        username: 'bob',
-        url: 'https://cdn.vectorstock.com/i/1000x1000/51/95/businessman-avatar-cartoon-character-profile-vector-25645195.webp',
+        createdAt: new Date().toString(),
+        userId:'1',
     },
     {
         id: '2',
         text: '손이 너무 차가워 ㅠㅠ',
-        createdAt: Date.now().toString(),
-        name: 'Hyeon',
-        username: 'hyeon',
-    },
+        createdAt: new Date().toString(),
+        userId:'1',
+    }
 ];
 
 export async function getAll() {
-    return tweets;
+    return Promise.all(
+        tweets.map(async (tweet) => {
+            const { username, name, url } = await userRepository.findById(tweet.userId);
+            return { ...tweet, username, name, url };
+        })
+    );
 }
 
-export async function getByUsername (username){
-    return tweets.filter(t => t.username === username);
+export async function getAllByUsername (username){
+    return getAll().then((tweets) => 
+        tweets.filter(t => t.username === username)
+    );
 }
 
 export async function getById (id){
-    return tweets.find(f => f.id === id);
+    const found = tweets.find(f => f.id === id); // 게시글 id 가 일치하는것을 found 에 담는다.
+    if(!found){
+        return null;
+    }
+    const { username, name, url } = userRepository.findById(found.userId); // found 의 userId 로 데이터를 가져온다.
+    return {...found, username, name, url};
 }
 
-export async function create (text, name, username){
+export async function create (text, userId){
     const tweet = {
-        id : Date.now().toString(),
+        id : new Date().toString(),
         text,
         createdAt : new Date(),
-        name,
-        username,
+        userId,
     };
     tweets = [tweet, ...tweets];
-    return tweet;
+    return getById(tweet.id);
 }
 
 export async function update (id, text){
@@ -45,7 +55,7 @@ export async function update (id, text){
     if(tweet){
         tweet.text = text;
     }
-    return tweet;
+    return getById(tweet.id);
 }
 
 

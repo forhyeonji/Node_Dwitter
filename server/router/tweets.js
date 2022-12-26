@@ -3,6 +3,7 @@ import 'express-async-errors';
 import * as tweetController from '../controller/tweet.js'
 import { body, query } from 'express-validator';
 import { validate } from '../middleware/validator.js';
+import { isAuth } from '../middleware/auth.js';
 
 // validation
 // sanitization
@@ -19,25 +20,19 @@ const validateTweet = [
 // GET /tweets
 // GET /tweets?username=:username
 // getTweets함수()로 바로 호출하면 값이 연결되니 getTweets 함수만 연결해야한다.
-router.get(
-    '/', 
-    query('username')
-        .trim()
-        .toLowerCase(),
-    validate,
-    tweetController.getTweets);
+router.get('/', isAuth,tweetController.getTweets);
 
 
 // GET /tweets/:id
-router.get('/:id', validate, tweetController.getTweet);
+router.get('/:id', isAuth, validate, tweetController.getTweet);
 
 
 // POST /tweets
-router.post('/', validateTweet, tweetController.createTweet);
+router.post('/', isAuth, validateTweet, tweetController.createTweet);
 
 
 // PUT /tweets/:id
-router.put('/:id', validateTweet, tweetController.updateTweet);
+router.put('/:id', isAuth, validateTweet, tweetController.updateTweet);
 
 
 // DELETE /tweets/:id
