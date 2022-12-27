@@ -26,16 +26,16 @@ export async function getAll() {
 
 export async function getAllByUsername (username){
     return getAll().then((tweets) => 
-        tweets.filter(t => t.username === username)
+        tweets.filter((tweet) => tweet.username === username)
     );
 }
 
 export async function getById (id){
-    const found = tweets.find(f => f.id === id); // 게시글 id 가 일치하는것을 found 에 담는다.
+    const found = tweets.find((tweet) => tweet.id === id); // 게시글 id 가 일치하는것을 found 에 담는다.
     if(!found){
         return null;
     }
-    const { username, name, url } = userRepository.findById(found.userId); // found 의 userId 로 데이터를 가져온다.
+    const { username, name, url } = await userRepository.findById(found.userId); // found 의 userId 로 데이터를 가져온다.
     return {...found, username, name, url};
 }
 

@@ -9,7 +9,7 @@ let users = [
         password:"$2b$12$4n5x1Uv3m2uJhmRdyWraRuUQcInaeQ5fdhmFIc7dKetfeEFAF.p.y",
         name:"Hyeonji",
         email:"hyeonni1907@naver.com",
-        url:"https://widgetwhats.com/app/uploads/2019/11/free-profile-photo-whatsapp-1.png"
+        url:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7ZT2fMXUZUX1bnyjMANFggN9IxkMOvfJo8Q&usqp=CAU",
     },
 ];
 

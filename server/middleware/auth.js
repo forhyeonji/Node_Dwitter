@@ -5,15 +5,19 @@ const AUTH_ERROR = { message : 'Authorization' };
 
 export const isAuth = async (req, res, next) => {
     const authHeader = req.get('Authorization');
+
+    // 오류처리
     if(!(authHeader && authHeader.startsWith('Bearer '))){
     const AUTH_ERROR = { message : 'Authorization' };
         return res.status(401).json(AUTH_ERROR);
     };
 
+
+    // 오류가 없다면 토큰을 저장
     const token = authHeader.split(' ')[1];
 
-// TODO: Make it secure!
 
+// TODO: Make it secure!
     jwt.verify(
         token,
         'e4yzkg#smrEJ9YJc50WM3%9O0o$lUIsr',

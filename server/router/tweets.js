@@ -12,19 +12,19 @@ const router = express.Router();
 const validateTweet = [
     body('text')
     .trim()
-    .isLength({ min : 5 })
-    .withMessage('text should be at least 5 characters'),
+    .isLength({ min : 3 })
+    .withMessage('text should be at least 3 characters'),
     validate,
 ];
 
 // GET /tweets
 // GET /tweets?username=:username
 // getTweets함수()로 바로 호출하면 값이 연결되니 getTweets 함수만 연결해야한다.
-router.get('/', isAuth,tweetController.getTweets);
+router.get('/', isAuth, tweetController.getTweets);
 
 
 // GET /tweets/:id
-router.get('/:id', isAuth, validate, tweetController.getTweet);
+router.get('/:id', isAuth, tweetController.getTweet);
 
 
 // POST /tweets
@@ -36,6 +36,6 @@ router.put('/:id', isAuth, validateTweet, tweetController.updateTweet);
 
 
 // DELETE /tweets/:id
-router.delete('/:id', validate, tweetController.removeTweet);
+router.delete('/:id', isAuth, tweetController.removeTweet);
 
 export default router;
