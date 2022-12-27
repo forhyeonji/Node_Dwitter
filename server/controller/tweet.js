@@ -1,3 +1,4 @@
+import { contentSecurityPolicy } from 'helmet';
 import * as tweetRepository from '../data/tweet.js';
 
 export async function getTweets(req, res){
@@ -38,6 +39,9 @@ export async function updateTweet(req, res, next) {
     if (!tweet) {
         return res.status(404).json({ message: `Tweet not found: ${id}` });
     }
+    // 수정하는 트윗의 글쓴이와 내 userId가 일치해야 함
+    // 401 : 로그인이 필요한 서비스인데 로그인이 되어있지 않을때
+    // 403 : 로그인이 되어있지만 권한이 없을 때
     if (tweet.userId !== req.userId) {
         return res.sendStatus(403);
     }
