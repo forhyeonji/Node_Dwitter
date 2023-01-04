@@ -11,6 +11,13 @@ let users = [
         email:"hyeonni1907@naver.com",
         url:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7ZT2fMXUZUX1bnyjMANFggN9IxkMOvfJo8Q&usqp=CAU",
     },
+    {   
+        id:"2",
+        username:"kipss",
+        password:"$2b$12$TxxKCE6qcYxJjald45dtFu/OarFJmzTWukJK0Xhx5FQ9672KC/j.2",
+        name:"Kips",
+        email:"kips@naver.com",
+    },
 ];
 
 export async function findByUsername(username){

@@ -16,6 +16,9 @@ const Tweets = memo(({ tweetService, username, addable }) => {
       .getTweets(username)
       .then((tweets) => setTweets([...tweets]))
       .catch(onError);
+
+      const stopSync = tweetService.onSync((tweet) => onCreated(tweet));
+      return () => stopSync();
   }, [tweetService, username, user]);
 
   const onCreated = (tweet) => {
