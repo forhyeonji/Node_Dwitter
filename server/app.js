@@ -7,6 +7,7 @@ import tweetsRouter from './router/tweets.js';
 import authRouter from './router/auth.js';
 import { config } from './config.js';
 import { initSocket } from './connection/socket.js'
+import { db } from './db/database.js';
 
 
 const app = express();
@@ -27,5 +28,7 @@ app.use((error, req, res, next) => {
     console.error(error);
     res.sendStatus(500);
 })
+
+db.getConnection().then((connection) => console.log(connection));
 const server = app.listen(config.host.port);
 initSocket(server);
