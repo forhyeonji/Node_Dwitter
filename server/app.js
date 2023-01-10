@@ -7,7 +7,7 @@ import tweetsRouter from './router/tweets.js';
 import authRouter from './router/auth.js';
 import { config } from './config.js';
 import { initSocket } from './connection/socket.js'
-import { db } from './db/database.js';
+import { db, sequelize } from './db/database.js';
 
 
 const app = express();
@@ -29,6 +29,8 @@ app.use((error, req, res, next) => {
     res.sendStatus(500);
 })
 
-db.getConnection().then();
-const server = app.listen(config.host.port);
-initSocket(server);
+sequelize.sync().then((client)=>{
+    //console.log(client);
+    const server = app.listen(config.host.port);
+    initSocket(server);
+}) // sync는 db의 모델과 모델에서 정의한 스키마가 db에 테이블로 존재하지 않는다면 테이블을 만들어주는 함수
