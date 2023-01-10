@@ -9,9 +9,6 @@ back-end : Node.js, express, mySQL, socket, jwt<br>
 Client : service 구현<br>
 Server : Rest APIs 셋팅 (postman)<br>
 
-## 📌 ~12.30<br>
-Server : jwt를 활용한 보안
-
 ## 📌 ~2023.01.11<br>
 Server : <br>
    - 기능 구현 및 DB연습<br>
