@@ -1,64 +1,78 @@
-import * as userRepository from '../data/auth.js';
+import SQ from 'sequelize';
+import { sequelize } from '../db/database.js';
+import { User } from './auth.js';
+const DataTypes = SQ.DataTypes;
+const Sequelize = SQ.Sequelize;
 
-let tweets = [
-    {
-        id: '1',
-        text: '너무춥다 너무너무 추워 ㅠ',
-        createdAt: new Date().toString(),
-        userId:'1',
-    },
-    {
-        id: '2',
-        text: '손이 너무 차가워 ㅠㅠ',
-        createdAt: new Date().toString(),
-        userId:'1',
-    }
-];
+const Tweet = sequelize.define('tweet', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
+  text: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+});
+Tweet.belongsTo(User); // tweet 테이블과 user 테이블 연결
+
+const INCLUDE_USER = {
+  attributes: [
+    'id',
+    'text',
+    'createdAt',
+    'userId',
+    [Sequelize.col('user.name'), 'name'],
+    [Sequelize.col('user.username'), 'username'],
+    [Sequelize.col('user.url'), 'url'],
+  ],
+  include: {
+    model: User,
+    attributes: [],
+  },
+};
+
+const ORDER_DESC = {
+  order: [['createdAt', 'DESC']],
+};
 
 export async function getAll() {
-    return Promise.all(
-        tweets.map(async (tweet) => {
-            const { username, name, url } = await userRepository.findById(tweet.userId);
-            return { ...tweet, username, name, url };
-        })
-    );
+  return Tweet.findAll({ ...INCLUDE_USER, ...ORDER_DESC });
 }
 
-export async function getAllByUsername (username){
-    return getAll().then((tweets) => 
-        tweets.filter((tweet) => tweet.username === username)
-    );
+export async function getAllByUsername(username) {
+  return Tweet.findAll({
+    ...INCLUDE_USER,
+    ...ORDER_DESC,
+    include: { ...INCLUDE_USER.include, where: { username } },
+  });
 }
 
-export async function getById (id){
-    const found = tweets.find((tweet) => tweet.id === id); // 게시글 id 가 일치하는것을 found 에 담는다.
-    if(!found){
-        return null;
-    }
-    const { username, name, url } = await userRepository.findById(found.userId); // found 의 userId 로 데이터를 가져온다.
-    return {...found, username, name, url};
+export async function getById(id) {
+  return Tweet.findOne({
+    where: { id },
+    ...INCLUDE_USER,
+  });
 }
 
-export async function create (text, userId){
-    const tweet = {
-        id : Date.now().toString(),
-        text,
-        createdAt : new Date(),
-        userId,
-    };
-    tweets = [tweet, ...tweets];
-    return getById(tweet.id);
+export async function create(text, userId) {
+  return Tweet.create({ text, userId }) //
+    .then((data) => this.getById(data.dataValues.id));
 }
 
-export async function update (id, text){
-    const tweet = tweets.find((f) => f.id === id);
-    if(tweet){
-        tweet.text = text;
-    }
-    return getById(tweet.id);
+export async function update(id, text) {
+  return Tweet.findByPk(id, INCLUDE_USER) //
+    .then((tweet) => {
+      tweet.text = text;
+      return tweet.save();
+    });
 }
 
-
-export async function remove (id){
-    tweets = tweets.filter(t => t.id !== id);
+export async function remove(id) {
+  return Tweet.findByPk(id) //
+    .then((tweet) => {
+      tweet.destroy();
+    });
 }
