@@ -1,37 +1,24 @@
-// 1 password 'abcd1234' : $2b$12$4n5x1Uv3m2uJhmRdyWraRuUQcInaeQ5fdhmFIc7dKetfeEFAF.p.y
-// 2 password 'aaaa94' :  $2b$12$TxxKCE6qcYxJjald45dtFu/OarFJmzTWukJK0Xhx5FQ9672KC/j.2
-
-
-let users = [
-    {   
-        id:"1",
-        username:"hyeonji",
-        password:"$2b$12$4n5x1Uv3m2uJhmRdyWraRuUQcInaeQ5fdhmFIc7dKetfeEFAF.p.y",
-        name:"Hyeonji",
-        email:"hyeonni1907@naver.com",
-        url:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7ZT2fMXUZUX1bnyjMANFggN9IxkMOvfJo8Q&usqp=CAU",
-    },
-    {   
-        id:"2",
-        username:"kipss",
-        password:"$2b$12$TxxKCE6qcYxJjald45dtFu/OarFJmzTWukJK0Xhx5FQ9672KC/j.2",
-        name:"Kips",
-        email:"kips@naver.com",
-    },
-];
+import SQ, { DataTypes } from 'sequelize';
+import {db} from '../db/database.js';
 
 export async function findByUsername(username){
-    return users.find((user) => user.username === username);
+    return db.execute('SELECT * FROM users WHERE username=?', [username])
+    .then((result) => result[0][0]);
 };
 
 export async function findById(id){
-    return users.find((user) => user.id === id);
-}
-
-export async function createUser (user) {
-    const created = { ...user, id: Date.now().toString() };
-    users.push(created);
-    return created.id;
+    return db.execute('SELECT * FROM users WHERE id=?', [id])
+    .then((result) => result[0][0]);
 };
 
-
+export async function createUser (user) {
+    const { username, password, name, email, url } = user;
+    return db
+    .execute(
+        'INSERT INTO users (username, password, name, email,url) VALUES (?,?,?,?,?)', 
+        [username, password, name, email, url]
+    )
+    .then((result)=>{
+        return result[0].insertId;
+    });
+};

@@ -33,7 +33,7 @@ export async function updateTweet(req, res, next) {
     // req에서 id를 찾는다.
     // req의 body에서 온 정보중에서 text를 찾는다.
     // id 일치하는 것의 text를 바꿔준다.
-    const id = req.params.id;
+    const id = req.params.id; // 트윗번호
     const text = req.body.text;
 
     // 수정하는 대상이 되는 트윗
@@ -44,7 +44,7 @@ export async function updateTweet(req, res, next) {
     // 수정하는 트윗의 글쓴이와 내 userId가 일치해야 함
     // 401 : 로그인이 필요한 서비스인데 로그인이 되어있지 않을때
     // 403 : 로그인이 되어있지만 권한이 없을 때
-    if (tweet.userId !== req.userId) {
+    if (tweet.userid !== req.userId) {
         return res.sendStatus(403);
     }
     const updated = await tweetRepository.update(id, text);
