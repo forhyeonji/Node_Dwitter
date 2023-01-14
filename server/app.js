@@ -6,9 +6,8 @@ import 'express-async-errors';
 import tweetsRouter from './router/tweets.js';
 import authRouter from './router/auth.js';
 import { config } from './config.js';
-import { initSocket } from './connection/socket.js'
-import { db } from './db/database.js';
-
+import { initSocket } from './connection/socket.js';
+import { sequelize } from './db/database.js';
 
 const app = express();
 
@@ -21,13 +20,15 @@ app.use('/tweets', tweetsRouter);
 app.use('/auth', authRouter);
 
 app.use((req, res, next) => {
-    res.sendStatus(404);
+  res.sendStatus(404);
 });
 
 app.use((error, req, res, next) => {
-    console.error(error);
-    res.sendStatus(500);
-})
+  console.error(error);
+  res.sendStatus(500);
+});
 
-const server = app.listen(config.host.port);
-initSocket(server);
+sequelize.sync().then(() => {
+  const server = app.listen(config.host.port);
+  initSocket(server);
+}); // sync는 db의 모델과 모델에서 정의한 스키마가 db에 테이블로 존재하지 않는다면 테이블을 만들어주는 함수
