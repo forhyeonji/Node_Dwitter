@@ -74,3 +74,12 @@ export async function me(req, res, next) {
     .status(200)
     .json({ token: req.token, username: user.username, userId: req.userId });
 }
+
+export async function csrfToken(req, res, next) {
+  const csrfToken = await generateCSRFToken();
+  res.status(200).json({ csrfToken });
+}
+
+async function generateCSRFToken() {
+  return bcrypt.hash(config.csrf.plainToken, 1);
+}

@@ -31,8 +31,14 @@ const validateSignup = [
 ];
 
 router.post('/signup', validateSignup, authController.signup);
+
 router.post('/login', validateCredential, authController.login);
+
 router.post('/logout', authController.logout);
+
 router.get('/me', isAuth, authController.me);
+
+// 클라이언트가 서버에게 토큰을 요청함
+router.get('/csrf-token', authController.csrfToken);
 
 export default router;
