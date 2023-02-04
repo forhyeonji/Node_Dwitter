@@ -23,7 +23,8 @@ export async function signup(req, res) {
     email,
     url,
   });
-  const token = createJwtToken(userId);
+  const token = createJwtToken(userId); // cookie header
+  setToken(res, token);
   res.status(201).json({ token, username });
 }
 
@@ -38,6 +39,7 @@ export async function login(req, res) {
     return res.status(401).json({ message: 'Invalid user or password' });
   }
   const token = createJwtToken(user.id);
+  setToken(res, token);
   res.status(200).json({ token, username });
 }
 
@@ -45,6 +47,16 @@ function createJwtToken(id) {
   return jwt.sign({ id }, config.jwt.secretKey, {
     expiresIn: config.jwt.expiresInSec,
   });
+}
+
+function setToken(res, token) {
+  const options = {
+    maxAge: config.jwt.expiresInSec * 1000, // 토큰과 같은 시간에 만료되도록! 대신 maxAge는 ms 이므로 1000을 곱해줌
+    httpOnly: true,
+    sameSite: 'none', // 서버와 클라이언트가 같은 도메인이 아니어도 쿠키설정을 할 수 있게 설정!
+    secure: true, // sameSite 가 none 일 때!
+  };
+  res.cookie('token', token, options); // HTTP-ONLY 🍪
 }
 
 export async function me(req, res, next) {
