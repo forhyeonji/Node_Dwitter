@@ -5,16 +5,27 @@ import { config } from '../config.js';
 const AUTH_ERROR = { message: 'Authorization' };
 
 export const isAuth = async (req, res, next) => {
-  const authHeader = req.get('Authorization');
+  // 1. Cookie (for Browser)
+  // 2. Header (for Non-Browser Client)
 
-  // 오류처리
-  if (!(authHeader && authHeader.startsWith('Bearer '))) {
-    const AUTH_ERROR = { message: 'Authorization' };
+  let token;
+  // check the header first
+  const authHeader = req.get('Authorization');
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.split(' ')[1];
+  }
+
+  // if no token in the header, check the cookie
+  if (!token) {
+    token = req.cookies['token'];
+  }
+
+  if (!token) {
     return res.status(401).json(AUTH_ERROR);
   }
 
+  const AUTH_ERROR = { message: 'Authorization' };
   // 오류가 없다면 토큰을 저장
-  const token = authHeader.split(' ')[1];
 
   // TODO: Make it secure!
   jwt.verify(token, config.jwt.secretKey, async (error, decoded) => {
